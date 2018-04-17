@@ -1,6 +1,6 @@
 package javaBasics;
 
-import Model.Article;
+import model.Article;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

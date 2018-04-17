@@ -1,8 +1,10 @@
 package lesson3;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.junit.Assert;
+import core.ArticlePage;
+import core.BaseFunc;
+import core.HomePage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -14,27 +16,31 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 public class DelfiTest {
+    private BaseFunc baseFunc = new BaseFunc();
+
     private static final String TITLE = "Olimpiskā uguns nodziest – Phjončhanas ziemas olimpiskās spēles ir noslēgušās";
     private static final String MAIN_PAGE_WEB_URL = "http://www.delfi.lv";
     private static final String MAIN_PAGE_MOBILE_URL = "http://m.delfi.lv";
-    private static final By ARTICLE_TITLE = By.xpath("//a[@class='top2012-title']");
+
     private static final Logger LOGGER = LogManager.getLogger(DelfiTest.class);
 
     @Test
     public void getArticle() {
-        System.setProperty("webdriver.gecko.driver", "C:/geckodriver.exe");
-        WebDriver driver = new FirefoxDriver();
-        driver.manage().window().maximize();
 
-        LOGGER.info("We are staring our test");
+        LOGGER.info("We are opening www.delfi.lv ");
         // Open main page on Web version
-        driver.get(MAIN_PAGE_WEB_URL);
+        baseFunc.getToUrl(MAIN_PAGE_WEB_URL);
 
-        //Find all titles and add them to a list !
-        List<WebElement> articleTitles = driver.findElements(ARTICLE_TITLE);
+        HomePage homePage = new HomePage(baseFunc);
+
+        List<WebElement> articleTitles = homePage.getAllTitles();
 
         //Check if list is not empty
-        assertTrue("Title iist is empty", !articleTitles.isEmpty());
+        assertTrue("Title list is empty", !articleTitles.isEmpty());
+
+        //Go to the first article page
+        ArticlePage articlePage = homePage.goToFirstArticle();
+
         //Go through a list and get text from web element
         boolean isTitlePresent = false;
         for (WebElement articleTitle : articleTitles) {
@@ -50,7 +56,7 @@ public class DelfiTest {
         //If we don't find matches for TITLE variable create message "Element not found"
         assertTrue("No article found", isTitlePresent);
         //Close browser window
-        driver.quit();
+        BaseFunc.driver.quit();
 
 
         // Open main page on Mobile version
